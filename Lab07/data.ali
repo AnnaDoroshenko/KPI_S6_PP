@@ -1,0 +1,110 @@
+V "GNAT Lib v2017"
+A -gnatl=data.lst
+A -mtune=generic
+A -march=pentium4
+P ZX
+
+RN
+RV NO_IO
+RV NO_DYNAMIC_SIZED_OBJECTS
+RV SPARK_05
+
+U data%b		data.adb		4246986f NE OO PK GE
+W ada%s			ada.ads			ada.ali
+W ada.integer_text_io%s	a-inteio.ads		a-inteio.ali
+W text_io%s		text_io.ads		text_io.ali
+
+U data%s		data.ads		db7712df BN EE NE OO PK GE
+
+D ada.ads		20170516105950 76789da1 ada%s
+D a-except.ads		20170516105952 291912d5 ada.exceptions%s
+D a-inteio.ads		20170516105954 f64b89a4 ada.integer_text_io%s
+D a-ioexce.ads		20170516105948 e4a01f64 ada.io_exceptions%s
+D a-stream.ads		20170516105952 119b8fb3 ada.streams%s
+D a-tags.ads		20170516105954 d3a89129 ada.tags%s
+D a-textio.ads		20170516105954 386df5d4 ada.text_io%s
+D a-tiinio.ads		20170516105950 aa04e5d6 ada.text_io.integer_io%s
+D a-unccon.ads		20170516105954 31484697 ada.unchecked_conversion%s
+D data.ads		20180503210550 db7712df data%s
+D data.adb		20180503210550 4ec8cb8c data%b
+D interfac.ads		20170516105950 5ab55268 interfaces%s
+D i-cstrea.ads		20170516105950 e53d8b8e interfaces.c_streams%s
+D system.ads		20170516105954 32a08138 system%s
+D s-crtl.ads		20170516105948 0ebbdb71 system.crtl%s
+D s-exctab.ads		20170516105954 54135002 system.exception_table%s
+D s-ficobl.ads		20170516105956 078245e4 system.file_control_block%s
+D s-parame.ads		20170516105954 7e2a0d7f system.parameters%s
+D s-soflin.ads		20170516105950 14e1eb6c system.soft_links%s
+D s-stache.ads		20170516105954 a37c21ec system.stack_checking%s
+D s-stalib.ads		20170516105954 09bd3940 system.standard_library%s
+D s-stoele.ads		20170516105956 2dc34a04 system.storage_elements%s
+D s-traent.ads		20170516105950 005bf670 system.traceback_entries%s
+D s-unstyp.ads		20170516105952 34867c83 system.unsigned_types%s
+D s-wchcon.ads		20170516105954 1b7d22d2 system.wch_con%s
+D text_io.ads		20170516105954 21b2c898 text_io%s
+X 1 ada.ads
+16K9*Ada 20e8 11|1r15 2r14
+X 3 a-inteio.ads
+18K13*Integer_Text_IO[8|46] 11|1w19 2r18
+X 7 a-textio.ads
+166U14*New_Line 11|85s10
+X 8 a-tiinio.ads
+66U14*Put 11|83s15[3|18]
+X 10 data.ads
+2i4 N{integer} 10r34 16r34 11|9r19 16r19 17r22 49r22 51r25 63r22 73r22 81r19
+. 82r22
+3i4 H{integer} 7r34 8r37 9r37 13r34 14r37 15r37 11|28r19 48r19 62r19 72r19
+5k9*Data 2z4 3z4 27l5 27e9 11|5b14 89l5 89t9
+6A14*Vector(integer)<integer> 7r24 8r25 9r25 10r24 18r47 20r47 11|7r42 25r42
+7A13*VectorH{6A14}<integer>
+8A13*Vector2H{6A14}<integer>
+9A13*Vector3H{6A14}<integer>
+10A13*VectorN{6A14}<integer> 12r46
+12A10*Matrix(10A13)<integer> 13r24 14r25 15r25 16r24 19r48 22r44 22r59 23r62
+. 23r77 24r41 24r61 25r41 11|14r43 45r39 45r54 59r57 59r72 70r36 70r56 79r36
+13A13*MatrixH{12A10}<integer>
+14A13*Matrix2H{12A10}<integer>
+15A13*Matrix3H{12A10}<integer>
+16A13*MatrixN{12A10}<integer> 11|46r14 60r19
+18U19*VectorFillWithOnes 18<39 11|7b14 12l8 12t26
+18a39 A{6A14} 11|7b34 10m10
+19U19*MatrixFillWithOnes 19<39 11|14b14 21l8 21t26
+19a39 MA{12A10} 11|14b34 18m13
+20V18*SearchMinElemOfVector{integer} 20>40 11|25b13 34l8 34t29
+20a40 A{6A14} 11|25b35 26r28 29r13 30r24
+21V18*SearchTotalMin{integer} 21>34 21>37 11|36b13 43l8 43t22
+21i34 a{integer} 11|36b29 37r24 39r14
+21i37 b{integer} 11|36b32 39r10 40r17
+22V18*MultMatrices{12A10} 22>32 22>36 11|45b13 57l8 57t20
+22a32 MA{12A10} 11|45b27 52r43
+22a36 MB{12A10} 11|45b31 52r55
+23V18*MultScalarMatrix{12A10} 23>36 23>57 11|59b13 68l8 68t24
+23i36 scalar{integer} 11|59b31 64r32
+23a57 MA{12A10} 11|59b52 64r41
+24U19*AddMatrices 24<32 24>49 24>53 11|70b14 77l8 77t19
+24a32 MR{12A10} 11|70b27 74m13
+24a49 MA{12A10} 11|70b44 74r25
+24a53 MB{12A10} 11|70b48 74r36
+25U19*OutputMatrix 25>33 11|79b14 87l8 87t20
+25a33 MA{12A10} 11|79b28 83r19
+X 11 data.adb
+9i11 i{integer} 10r12
+16i11 i{integer} 18r16
+17i14 j{integer} 18r19
+26i7 minElem{integer} 29r20 30m13 33r14
+28i11 i{integer} 29r15 30r26
+37i7 min{integer} 40m10 42r14
+46a7 mRes{10|16A13} 50m13 52m16 52r30 56r14
+48i11 i{integer} 50r18 52r21 52r35 52r47
+49i14 j{integer} 50r21 52r24 52r38 52r62
+51i17 k{integer} 52r50 52r59
+60a7 resMatrix{10|16A13} 64m13 67r14
+62i11 i{integer} 64r23 64r44
+63i14 j{integer} 64r26 64r47
+72i11 i{integer} 74r16 74r28 74r39
+73i14 j{integer} 74r19 74r31 74r42
+81i11 i{integer} 83r22
+82i14 j{integer} 83r25
+X 26 text_io.ads
+24K9*Text_IO=24:29 11|1w6 2r5
+

@@ -1,0 +1,180 @@
+GNAT GPL 2017 (20170515-63)
+Copyright 1992-2017, Free Software Foundation, Inc.
+
+Compiling: lab01.adb
+Source file time stamp: 2018-03-13 13:18:40
+Compiled at: 2018-03-13 15:20:21
+
+     1. --------------------------------------------------------------------------------
+     2. -- Programming for Parallel Computer Systems --
+     3. -- Lab 1. Ada. Semaphores --
+     4.
+     5. -- MO:=min(Z)*MT*MR+alpha*MU --
+     6.
+     7. -- Author: Anna Doroshenko --
+     8. -- Group: IO-52 --
+     9. -- Date: 21.02.2018 --
+    10. --------------------------------------------------------------------------------
+    11.
+    12. with Data, Ada.Text_IO, Ada.Integer_Text_IO, System.Multiprocessors, Ada.Synchronous_Task_Control;
+    13. use Ada.Text_IO, Ada.Integer_Text_IO, System.Multiprocessors, Ada.Synchronous_Task_Control;
+    14.
+    15. procedure Lab01 is
+    16.
+    17.    Storage : Integer := 50000000;
+    18.    N : Integer := 4;             -- size of the vector and the matrix
+    19.    P : Integer := 2;             -- amount of the processors
+    20.    H : Integer := N/P;           -- size of the subvector and the submatrix
+    21.
+    22.    package NewData is new Data(N);
+    23.    use NewData;
+    24.
+    25.    -- common resourses --
+    26.    a : Integer := 2147483647;     -- var for min (now have value of max integer)
+    27.    alpha : Integer;
+    28.    MT : Matrix;
+    29.
+    30.    MO, MR, MU : Matrix;
+    31.    Z : Vector;
+    32.    S00, S0, S1, S2, S3, S4, S5 : Suspension_Object;
+    33.
+    34.    procedure Task_Launch is
+    35.
+    36.    -- Specification of task 1 --
+    37.    task T1 is
+    38.       pragma Task_Name("Task 1");
+    39.       pragma Storage_Size(Storage);
+    40.    end T1;
+    41.
+    42.    -- Specification of task 2 --
+    43.    task T2 is
+    44.       pragma Task_Name("Task 2");
+    45.       pragma Storage_Size(Storage);
+    46.    end T2;
+    47.
+    48.    -----------------------------------------------------------------------------
+    49.    -- Body of task 1 --
+    50.    task body T1 is
+    51.       alpha1, a1 : Integer;
+    52.       MT1 : Matrix;
+    53.    begin
+    54.       Put_Line("Task T1 started");
+    55.
+    56.       -- input of Z and MR
+    57.       FillVectorWithOnes(Z);
+    58.       FillMatrixWithOnes(MR);
+    59.
+    60.       -- signal T2 about input of Z and MR
+    61.       Set_True(S1);
+    62.
+    63.       -- wait for input of data in T2
+    64.       Suspend_Until_True(S2);
+    65.
+    66.       -- calculation of a1 := min(Zh)
+    67.       a1 := SearchMinElemOfVectH(Z, 1, H);
+    68.
+    69.       -- calculation of a := min(a; a1)
+    70.       -- critical section
+    71.       Suspend_Until_True(S00);
+    72.          a := SearchMin(a, a1);
+    73.       Set_True(S00);
+    74.
+    75.       -- signal T2 about end of min calculation part
+    76.       Set_True(S3);
+    77.
+    78.        -- wait for the end of min calculation part in T2
+    79.       Suspend_Until_True(S4);
+    80.
+    81.       -- copy alpha, a and MT
+    82.       -- critical section
+    83.       Suspend_Until_True(S0);
+    84.          alpha1 := alpha;
+    85.          a1 := a;
+    86.          MT1 := CopyMatrix(MT);
+    87.       Set_True(S0);
+    88.
+    89.       -- main calculations
+    90.       AddMatricesH(MO, MultScalarMatrixH(a1, MultMatricesH(MT1, MR, 1, H), 1, H),
+    91.                    MultScalarMatrixH(alpha1, MU, 1, H), 1, H);
+    92.
+    93.       -- wait for calculations end in T2
+    94.       Suspend_Until_True(S5);
+    95.
+    96.       -- output
+    97.       if (N < 5) then
+    98.          Put_Line("Result: ");
+    99.          OutputMatrix(MO);
+   100.          New_Line;
+   101.       end if;
+   102.
+   103.       Put_Line("Task T1 finished");
+   104.
+   105.    end T1;
+   106.
+   107.   ------------------------------------------------------------------------------
+   108.   -- Body of task 2 --
+   109.    task body T2 is
+   110.       alpha2, a2 : Integer;
+   111.       MT2: Matrix;
+   112.    begin
+   113.       Put_Line("Task T2 started");
+   114.
+   115.       -- input of MT, alpha and MU
+   116.       alpha := 1;
+   117.       FillMatrixWithOnes(MT);
+   118.       FillMatrixWithOnes(MU);
+   119.
+   120.       -- signal T1 about input of MT, alpha and MU
+   121.       Set_True(S2);
+   122.
+   123.       -- wait for input of data in T1
+   124.       Suspend_Until_True(S1);
+   125.
+   126.       -- calculation of a2 := min(Zh)
+   127.       a2 := SearchMinElemOfVectH(Z, H+1, N);
+   128.
+   129.       -- calculation of a := min(a; a2)
+   130.       -- critical section
+   131.       Suspend_Until_True(S00);
+   132.          a := SearchMin(a, a2);
+   133.       Set_True(S00);
+   134.
+   135.       -- signal T1 about end of min calculation part
+   136.       Set_True(S4);
+   137.
+   138.       -- wait for the end of min calculation part in T1
+   139.       Suspend_Until_True(S3);
+   140.
+   141.       -- copy alpha, a and MT
+   142.       -- critical section
+   143.       Suspend_Until_True(S0);
+   144.          alpha2 := alpha;
+   145.          a2 := a;
+   146.          MT2 := CopyMatrix(MT);
+   147.       Set_True(S0);
+   148.
+   149.       -- main calculations
+   150.       AddMatricesH(MO, MultScalarMatrixH(a2, MultMatricesH(MT2, MR, H+1, N), H+1, N),
+   151.                    MultScalarMatrixH(alpha2, MU, H+1, N), H+1, N);
+   152.
+   153.       -- signal T1 about end of calculations
+   154.       Set_True(S5);
+   155.
+   156.       Put_Line("Task T2 finished");
+   157.
+   158.       end T2;
+   159.
+   160.    begin
+   161.       null;
+   162.    end Task_Launch;
+   163.
+   164. -- Body of main programme
+   165. begin
+   166.    Put_Line("Lab01 started");
+   167.    Set_True(S0);
+   168.    Set_True(S00);
+   169.    Task_Launch;
+   170.    Put_Line("Lab01 finished");
+   171. end Lab01;
+
+ 171 lines: No errors

@@ -1,0 +1,10 @@
+Different/
+Lab_8/
+Lab[1-7]/
+
+out/
+.idea/
+*.iml
+
+*.class
+run.zsh

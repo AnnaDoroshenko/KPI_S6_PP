@@ -1,0 +1,6 @@
+D:\Study\III course\VI semester\Paralel prog\Labs\Lab03\Lab03\bin\Debug\Lab03.exe.config
+D:\Study\III course\VI semester\Paralel prog\Labs\Lab03\Lab03\bin\Debug\Lab03.exe
+D:\Study\III course\VI semester\Paralel prog\Labs\Lab03\Lab03\bin\Debug\Lab03.pdb
+D:\Study\III course\VI semester\Paralel prog\Labs\Lab03\Lab03\obj\Debug\Lab03.csprojResolveAssemblyReference.cache
+D:\Study\III course\VI semester\Paralel prog\Labs\Lab03\Lab03\obj\Debug\Lab03.exe
+D:\Study\III course\VI semester\Paralel prog\Labs\Lab03\Lab03\obj\Debug\Lab03.pdb

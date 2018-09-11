@@ -1,0 +1,156 @@
+V "GNAT Lib v2017"
+M P W=b
+A -gnatA
+A -mtune=generic
+A -march=pentium4
+P ZX
+
+RN
+RV NO_EXCEPTION_HANDLERS
+RV NO_EXCEPTIONS
+RV NO_IO
+RV NO_NESTED_FINALIZATION
+RV NO_STANDARD_STORAGE_POOLS
+RV NO_TASK_HIERARCHY
+RV NO_TASKING
+RV STATIC_STORAGE_SIZE
+RV NO_DEFAULT_INITIALIZATION
+RV NO_IMPLEMENTATION_PRAGMAS
+RV SPARK_05
+RV MAX_TASKS=1+
+
+U lab01%b		lab01.adb		cfffb44c NE OO SU
+W ada%s			ada.ads			ada.ali
+W ada.exceptions%s	a-except.adb		a-except.ali
+W ada.integer_text_io%s	a-inteio.ads		a-inteio.ali
+W ada.real_time%s	a-reatim.adb		a-reatim.ali
+W ada.synchronous_task_control%s  a-sytaco.adb	a-sytaco.ali
+W ada.tags%s		a-tags.adb		a-tags.ali
+W ada.text_io%s		a-textio.adb		a-textio.ali
+W data%s		data.adb		data.ali
+W system%s		system.ads		system.ali
+W system.multiprocessors%s  s-multip.adb	s-multip.ali
+W system.parameters%s	s-parame.adb		s-parame.ali
+W system.soft_links%s	s-soflin.adb		s-soflin.ali
+W system.standard_library%s  s-stalib.adb	s-stalib.ali
+W system.task_info%s	s-tasinf.adb		s-tasinf.ali
+W system.tasking%s	s-taskin.adb		s-taskin.ali
+W system.tasking.stages%s  s-tassta.adb		s-tassta.ali
+Z text_io%s		text_io.ads		text_io.ali
+
+D ada.ads		20170516105950 76789da1 ada%s
+D a-except.ads		20170516105952 291912d5 ada.exceptions%s
+D a-finali.ads		20170516105954 bf4f806b ada.finalization%s
+D a-inteio.ads		20170516105954 f64b89a4 ada.integer_text_io%s
+D a-ioexce.ads		20170516105948 e4a01f64 ada.io_exceptions%s
+D a-reatim.ads		20170516105950 a87e2da7 ada.real_time%s
+D a-stream.ads		20170516105952 119b8fb3 ada.streams%s
+D a-sytaco.ads		20170516105954 19cfe912 ada.synchronous_task_control%s
+D a-tags.ads		20170516105954 d3a89129 ada.tags%s
+D a-taside.ads		20170516105954 c6417f71 ada.task_identification%s
+D a-textio.ads		20170516105954 386df5d4 ada.text_io%s
+D a-tiinio.ads		20170516105950 aa04e5d6 ada.text_io.integer_io%s
+D a-unccon.ads		20170516105954 31484697 ada.unchecked_conversion%s
+D data.ads		20180220232630 7ba32832 data%s
+D data.adb		20180220232412 17f3c09f data%b
+D interfac.ads		20170516105950 5ab55268 interfaces%s
+D i-c.ads		20170516105948 5421119b interfaces.c%s
+D i-cstrin.ads		20170516105952 341d0ddf interfaces.c.strings%s
+D i-cstrea.ads		20170516105950 e53d8b8e interfaces.c_streams%s
+D lab01.adb		20180221014402 5b19966f lab01%b
+D system.ads		20170516105954 32a08138 system%s
+D s-atacco.ads		20170516105954 4c36d12f system.address_to_access_conversions%s
+D s-crtl.ads		20170516105948 0ebbdb71 system.crtl%s
+D s-exctab.ads		20170516105954 54135002 system.exception_table%s
+D s-ficobl.ads		20170516105956 078245e4 system.file_control_block%s
+D s-finroo.ads		20170516105954 4ff27390 system.finalization_root%s
+D s-memory.ads		20170516105952 597d6634 system.memory%s
+D s-multip.ads		20170516105948 38ac9f73 system.multiprocessors%s
+D s-osinte.ads		20170516105954 2e5b26a9 system.os_interface%s
+D s-parame.ads		20170516105954 7e2a0d7f system.parameters%s
+D s-soflin.ads		20170516105950 14e1eb6c system.soft_links%s
+D s-stache.ads		20170516105954 a37c21ec system.stack_checking%s
+D s-stausa.ads		20170516105954 017a0a05 system.stack_usage%s
+D s-stalib.ads		20170516105954 09bd3940 system.standard_library%s
+D s-stalib.adb		20170516105948 f2fe2716 system.standard_library%b
+D s-stoele.ads		20170516105956 2dc34a04 system.storage_elements%s
+D s-tasinf.ads		20170516105952 601f6b72 system.task_info%s
+D s-taspri.ads		20170516105952 6c1d93d4 system.task_primitives%s
+D s-taprop.ads		20170516105950 1dd2e1b6 system.task_primitives.operations%s
+D s-taskin.ads		20170516105956 05d6152c system.tasking%s
+D s-tassta.ads		20170516105952 5a53a7c6 system.tasking.stages%s
+D s-traent.ads		20170516105950 005bf670 system.traceback_entries%s
+D s-unstyp.ads		20170516105952 34867c83 system.unsigned_types%s
+D s-wchcon.ads		20170516105954 1b7d22d2 system.wch_con%s
+D s-win32.ads		20170516105948 b7f96285 system.win32%s
+D text_io.ads		20170516105954 21b2c898 text_io%s
+X 1 ada.ads
+16K9*Ada 20e8 20|12r12 12r25 12r70 13r5 13r18 13r63
+X 4 a-inteio.ads
+18K13*Integer_Text_IO[12|46] 20|12w29 13r22
+X 8 a-sytaco.ads
+41K13*Synchronous_Task_Control 94e33 20|12w74 13r67
+47R9*Suspension_Object<3|50R9> 85e14 20|32r21
+50U14*Set_True 20|61s7 73s7 81s7 115s7 127s7 135s7 142s7 155s4
+64U14*Suspend_Until_True 20|64s7 71s7 77s7 88s7 118s7 125s7 131s7
+X 11 a-textio.ads
+49K13*Text_IO 471e16 20|12w16 13r9
+166U14*New_Line 20|94s10
+263U14*Put_Line 20|54s7 92s10 97s7 107s7 144s7 154s4 157s4
+X 14 data.ads
+4k9*Data 32e9 20|12w6 22r27
+7A9 Vector(integer) 20|31r8[22]
+8A9 Matrix(integer) 20|28r9[22] 30r17[22] 52r13[22] 105r12[22]
+15U14 OutputMatrix 20|93s10[22]
+17U14 FillVectorWithOnes 20|57s7[22]
+18U14 FillMatrixWithOnes 20|58s7[22] 111s7[22] 112s7[22]
+20V13 SearchMinElemOfVectH{integer} 20|67s13[22] 121s13[22]
+21V13 SearchMin{integer} 20|72s15[22] 126s15[22]
+22V13 MultMatricesH{8A9[20|22]} 20|84s46[22] 138s46[22]
+23V13 MultScalarMatrixH{8A9[20|22]} 20|84s24[22] 85s20[22] 138s24[22] 139s20[22]
+24U14 AddMatricesH 20|84s7[22] 138s7[22]
+25V13 CopyMatrix{8A9[20|22]} 20|80s17[22] 134s17[22]
+X 20 lab01.adb
+15U11*Lab01 15b11 158l5 158t10
+17i4 Storage{integer} 39r27 45r27
+18i4 N{integer} 20r19 22r32 91r11 121r42 138r74 138r83 139r55 139r64
+19i4 P{integer} 20r21
+20i4 H{integer} 67r40 84r72 84r79 85r53 85r60 121r37 138r69 138r78 139r50
+. 139r59
+22K12 NewData[14|4] 23r8
+26i4 a{integer} 72m10 72r25 79r16 126m10 126r25 133r16
+27i4 alpha{integer} 78r20 110m7 132r20
+28a4 MT{14|8A9[22]} 80r28 111m26 134r28
+30a4 MO{14|8A9[22]} 84m20 93r23 138m20
+30a8 MR{14|8A9[22]} 58m26 84r65 138r65
+30a12 MU{14|8A9[22]} 85r46 112m26 139r46
+31a4 Z{14|7A9[22]} 57m26 67r34 121r34
+32r4 S0{8|47R9} 71m26 71r26 73m16 73r16 77m26 77r26 81m16 81r16 125m26 125r26
+. 127m16 127r16 131m26 131r26 135m16 135r16 155m13 155r13
+32r8 S1{8|47R9} 61m16 61r16 118m26 118r26
+32r12 S2{8|47R9} 64m26 64r26 115m16 115r16
+32r16 S3{8|47R9} 88m26 88r26 142m16 142r16
+34U14 Task_Launch 34b14 150l8 150t19 156s4
+37t9 T1 50b14 99l8 99t10
+43t9 T2 103b14 146l11 146t13
+51i7 alpha1{integer} 78m10 85r38
+51i15 a1{integer} 67m7 72r28 79m10 84r42
+52a7 MT1{14|8A9[22]} 80m10 84r60
+104i7 alpha2{integer} 132m10 139r38
+104i15 a2{integer} 121m7 126r28 133m10 138r42
+105a7 MT2{14|8A9[22]} 134m10 138r60
+X 21 system.ads
+37K9*System 20|12r46 13r39 21|200e11
+67M9*Address
+X 27 s-memory.ads
+53V13*Alloc{21|67M9} 103i<c,__gnat_malloc>22
+68U14*Free 104i<c,__gnat_free>22
+76V13*Realloc{21|67M9} 105i<c,__gnat_realloc>22
+X 28 s-multip.ads
+16K16*Multiprocessors 20|12w53 13r46 28|28e27
+X 33 s-stausa.ads
+203U14*Initialize 204i<c,__gnat_stack_usage_initialize>22
+268U14*Output_Results 272i<c,__gnat_stack_usage_output_results>22
+X 35 s-stalib.adb
+93U14 Break_Start 94i<c,__gnat_break_start>22
+

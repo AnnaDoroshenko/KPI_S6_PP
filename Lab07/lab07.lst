@@ -1,0 +1,505 @@
+GNAT GPL 2017 (20170515-63)
+Copyright 1992-2017, Free Software Foundation, Inc.
+
+Compiling: lab07.adb
+Source file time stamp: 2018-05-05 08:56:58
+Compiled at: 2018-05-05 12:01:20
+
+     1. --------------------------------------------------------------------------------
+     2. -- Programming for Parallel Computer Systems --
+     3. -- Lab 7. Ada. Rendezvous --
+     4.
+     5. -- MA = MB*MC + MZ*(min(E)) --
+     6.
+     7. -- Author: Anna Doroshenko --
+     8. -- Group: IO-52 --
+     9. -- Date: 05.05.2018 --
+    10. --------------------------------------------------------------------------------
+    11. with Ada.Text_IO, Ada.Integer_Text_IO, Ada.Synchronous_Task_Control, Data;
+    12. use Ada.Text_IO, Ada.Integer_Text_IO, Ada.Synchronous_Task_Control;
+    13.
+    14. procedure Lab07 is
+    15. 	
+    16.    Storage : Integer := 50000000;
+    17.    N : Integer := 6;             -- size of the vector and the matrix
+    18.    P : Integer := 6;             -- amount of the processors
+    19.    H : Integer := N/P;           -- size of the subvector and the submatrix
+    20.
+    21.    package NewData is new Data(N, H);
+    22.    use NewData;
+    23.
+    24.    procedure Task_Launch is 
+    25.    	
+    26.    task T1 is
+    27.         pragma Task_Name("Task 1");
+    28.         pragma Storage_Size(Storage);
+    29.
+    30.         entry DataMB(MB: in MatrixN);
+    31.         entry DataMC(MC: in Matrix2H);
+    32.         entry Data_a(min: in Integer);
+    33.         
+    34.         entry SearchMin(a: out Integer);
+    35.         entry Res_MA(MA: out MAtrixH);
+    36.     end T1;
+    37.     -----------------------------------
+    38.     task T2 is
+    39.         pragma Task_Name("Task 2");
+    40.         pragma Storage_Size(Storage);
+    41.
+    42.         entry DataMZ_E(MZ: in Matrix3H; E: in Vector3H);
+    43.         entry DataMB(MB: in MatrixN);
+    44.         entry DataMC(MC: in MatrixH);
+    45.         entry Data_a(min: in Integer);
+    46.
+    47.         entry SearchMin(a: out Integer);
+    48.         entry Res_MA(MA: out Matrix2H);
+    49.     end T2;
+    50.     -----------------------------------
+    51.     task T3 is 
+    52.         pragma Task_Name("Task 3");
+    53.         pragma Storage_Size(Storage);
+    54.
+    55.         entry DataMZ_E(MZ: in Matrix2H; E: in Vector2H);
+    56.         entry DataMC(MC: in MatrixH);
+    57.     end T3;
+    58.     -----------------------------------
+    59.     task T4 is
+    60.         pragma Task_Name("Task 4");
+    61.         pragma Storage_Size(Storage);
+    62.
+    63.         entry DataMZ_E(MZ: in MatrixH; E: in VectorH);
+    64.         entry DataMB(MB: in MatrixN);
+    65.         entry DataMC(MC: in Matrix2H);
+    66.         entry Data_a(min: in Integer);
+    67.
+    68.         entry SearchMin(a: out Integer);
+    69.         entry Res_MA(MA: out Matrix3H);
+    70.     end T4;
+    71.     -----------------------------------
+    72.     task T5 is
+    73.         pragma Task_Name("Task 5");
+    74.         pragma Storage_Size(Storage);
+    75.
+    76.         entry DataMZ_E(MZ: in MatrixH; E: in VectorH);
+    77.         entry DataMB(MB: in MatrixN);
+    78.         entry Data_a(Min: in Integer);
+    79.
+    80.         entry SearchMin(A: out Integer);
+    81.         entry Res_MA(MA: out Matrix2H);
+    82.     end T5;
+    83.     -----------------------------------
+    84.     task T6 is
+    85.         pragma Task_Name("Task 6");
+    86.         pragma Storage_Size(Storage);
+    87.
+    88.         entry DataMZ_E(MZ: in Matrix2H; E: in Vector2H);
+    89.         entry DataMB(MB: in MatrixN);
+    90.         entry DataMC(MC: in Matrix3H);
+    91.         entry Data_a(Min: in Integer);
+    92.
+    93.         entry SearchMin(A: out Integer);
+    94.         entry Res_MA(MA: out MatrixH);
+    95.     end T6;
+    96.     -------------------------------------------------------
+    97.     -- tasks --
+    98.     task body T1 is
+    99.         MA1: MatrixH;
+   100.         MC1: Matrix2H;
+   101.         MB1, MZ1: MatrixN;
+   102.         E1: VectorN;
+   103.         a1: Integer;
+   104.
+   105.     begin
+   106.         Put_Line("Task 1 started");
+   107.
+   108.         -- input MZ, E
+   109.         MatrixFillWithOnes(MZ1);
+   110.         VectorFillWithOnes(E1);
+   111.
+   112.         -- send MZ, E in T2 & T6
+   113.         T2.DataMZ_E(MZ1(H+1..4*H), E1(H+1..4*H));
+   114.         T6.DataMZ_E(MZ1(4*H+1..6*H), E1(4*H+1..6*H));
+   115. 		
+   116.         -- receive MB from T2
+   117.         accept DataMB(MB: in MatrixN) do
+   118.             MB1(1..N) := MB(1..N);
+   119.         end DataMB;
+   120.
+   121.         -- receive MC from T6
+   122.         accept DataMC(MC: in Matrix2H) do
+   123.             MC1(1..2*H) := MC(1..2*H);
+   124.         end DataMC;
+   125. 		
+   126.         -- send MC in T2
+   127.         T2.DataMC(MC1(H+1..2*H));
+   128.
+   129.         -- calculation of min
+   130.         a1 := SearchMinElemOFVector(E1(1..H));
+   131.
+   132.         -- send a1 in T2
+   133.         accept SearchMin(a: out Integer) do
+   134.             a := a1;
+   135.         end SearchMin;
+   136.
+   137.         -- receive a from T2
+   138.         accept Data_a(min: in Integer) do
+   139.             a1:= min;
+   140.         end Data_a;
+   141.
+   142.         -- main calculation
+   143.         AddMatrices(MA1(1..H), MultMatrices(MC1(1..H), MB1(1..N)), MultScalarMatrix(a1, MZ1(1..H)));
+   144.
+   145.         -- send MA in T2
+   146.         accept Res_MA(MA: out MatrixH) do
+   147.             MA(1..H) := MA1(1..H);
+   148.         end Res_MA;
+   149.
+   150.         Put_Line("Task 1 finished");
+   151.     end T1;
+   152.     -------------------------------------------------------
+   153.     task body T2 is
+   154.         MA2: Matrix2H;
+   155.         MC2, MA2Calc: MatrixH;
+   156.         MZ2: Matrix3H;
+   157.         MB2: MatrixN;
+   158.         E2: Vector3H;
+   159.         a, a2: Integer;
+   160.
+   161. 	begin 
+   162. 		Put_Line("Task 2 started");
+   163.
+   164.         -- receive MZ, E from T1
+   165.         accept DataMZ_E(MZ: in Matrix3H; E: in Vector3H) do
+   166.             MZ2(1..3*H) := MZ(1..3*H);
+   167.             E2(1..3*H) := E(1..3*H);
+   168.         end DataMZ_E;
+   169.
+   170.         -- send MZ, E in T3
+   171.         T3.DataMZ_E(MZ2(H+1..3*H), E2(H+1..3*H));
+   172.
+   173.         -- receive MB from T3
+   174.         accept DataMB(MB: in MatrixN) do
+   175.             MB2(1..N) := MB(1..N);
+   176.         end DataMB;
+   177.
+   178.         -- send MB in T1
+   179.         T1.DataMB(MB2(1..N));
+   180.
+   181.         -- receive MC from T1
+   182.         accept DataMC(MC: in MatrixH) do
+   183.             MC2(1..H) := MC(1..H);
+   184.         end DataMC;
+   185.
+   186.         -- calculation of min
+   187.         a2 := SearchMinElemOfVector(E2(1..H));
+   188.
+   189.         -- receive a1 from T1 and search min(a1,a2)
+   190.         T1.SearchMin(a);
+   191.         a2 := SearchTotalMin(a, a2);
+   192.
+   193.         -- send a2 in T3
+   194.         accept SearchMin(a: out Integer) do
+   195.             a := a2;
+   196.         end SearchMin;
+   197.
+   198.         -- receive a from T3
+   199.         accept Data_a(min: in Integer) do
+   200.             a2:= min;
+   201.         end Data_a;
+   202.
+   203.         -- send a in T1
+   204.         T1.Data_a(a2);
+   205.
+   206.         -- receive MA from T1
+   207.         T1.Res_MA(MA2(1..H));
+   208.
+   209.         -- main calculation
+   210.         AddMatrices(MA2Calc(1..H), MultMatrices(MC2(1..H), MB2(1..N)), MultScalarMatrix(a2, MZ2(1..H)));
+   211. 		MA2(H+1..2*H) := MA2Calc(1..H);
+   212.
+   213.         -- send MA in T3
+   214.         accept Res_MA(MA: out Matrix2H) do
+   215.             MA(1..2*H) := MA2(1..2*H);
+   216.         end Res_MA;
+   217.
+   218.         Put_Line("Task 2 finished");
+   219.     end T2;
+   220.     -------------------------------------------------------
+   221.     task body T3 is
+   222.         MA3, MB3: MatrixN;
+   223.         MC3, MA3calc: MatrixH;
+   224.         MZ3: Matrix2H;
+   225. 		MA3calc1: Matrix3H;
+   226.         E3: Vector2H;
+   227.         a, a3: Integer;
+   228.
+   229.     begin
+   230.         Put_Line("Task 3 started");
+   231.
+   232.         -- input MB
+   233.         MatrixFillWithOnes(MB3);
+   234.
+   235.   		-- receive MZ, E from T2
+   236.         accept DataMZ_E(MZ: in Matrix2H; E: in Vector2H) do
+   237.             MZ3(1..2*H) := MZ(1..2*H);
+   238.             E3(1..2*H) := E(1..2*H);
+   239.         end DataMZ_E;
+   240.         
+   241.         -- send MZ, E in T4
+   242.         T4.DataMZ_E(MZ3(H+1..2*H), E3(H+1..2*H));
+   243.
+   244.         -- send MB in T4 & T2
+   245.         T4.DataMB(MB3(1..N));
+   246.         T2.DataMB(MB3(1..N));
+   247.
+   248.         -- receive MC from T4
+   249.         accept DataMC(MC: in MatrixH) do
+   250.             MC3(1..H) := MC(1..H);
+   251.         end DataMC;
+   252.
+   253.         -- calculation of min
+   254.         a3 := SearchMinElemOFVector(E3(1..H));
+   255.
+   256.         -- receive a2 from T2 and search min(a2,a3)
+   257.         T2.SearchMin(a);
+   258.         a3 := SearchTotalMin(a, a3);
+   259.
+   260.         -- receive a4 from T4 and search min(a4,a3)
+   261.         T4.SearchMin(a);
+   262.         a3 := SearchTotalMin(a, a3);
+   263.
+   264.         -- send a in T4 & T2
+   265.         T4.Data_a(a3);
+   266.         T2.Data_a(a3);
+   267.
+   268.         -- receive MA from T2
+   269.         T2.Res_MA(MA3(1..2*H));
+   270.
+   271. 		-- main calculation
+   272. 		AddMatrices(MA3calc(1..H), MultMatrices(MC3(1..H), MB3(1..N)), MultScalarMatrix(a3, MZ3(1..H)));
+   273. 		MA3(2*H+1..3*H) := MA3calc(1..H);
+   274.
+   275. 		-- receive MA from T4
+   276.         T4.Res_MA(MA3calc1(1..3*H));
+   277.         MA3(3*H+1..6*H) := MA3calc1(1..3*H);
+   278.
+   279.         -- Output MA
+   280. 		if (N < 13) then 
+   281. 			OutputMatrix(MA3);
+   282. 		end if;
+   283. 	   	
+   284.         Put_Line("Task 3 finished");
+   285.     end T3;
+   286.     -------------------------------------------------------
+   287.     task body T4 is
+   288.         MA4: Matrix3H;
+   289.         MC4: Matrix2H;
+   290.         MZ4, MC4Calc: MatrixH;
+   291.         MB4: MatrixN;
+   292.         E4: VectorH;
+   293.         a, a4: Integer;
+   294.
+   295. 	begin
+   296. 		Put_Line("Task 4 started");
+   297.
+   298.         -- receive MZ, E from T3
+   299.         accept DataMZ_E(MZ: in MatrixH; E: in VectorH) do
+   300.             MZ4(1..H) := MZ(1..H);
+   301.             E4(1..H) := E(1..H);
+   302.         end DataMZ_E;
+   303.
+   304.         -- receive MB from T3
+   305.         accept DataMB(MB: in MatrixN) do
+   306.             MB4(1..N) := MB(1..N);
+   307.         end DataMB;
+   308. 	
+   309.         -- send MB in T5
+   310.         T5.DataMB(MB4(1..N));
+   311.
+   312.         -- receive MC from T5
+   313.         accept DataMC(MC: in Matrix2H) do
+   314.             MC4(1..2*H) := MC(1..2*H);
+   315.         end DataMC;
+   316.
+   317.         -- send MC in T3
+   318.         T3.DataMC(MC4(1..H));
+   319.
+   320.         -- calculation of min
+   321.         a4 := SearchMinElemOfVector(E4(1..H));
+   322.
+   323.         -- receive a5 from T5 and search min(a4,a5)
+   324.         T5.SearchMin(a);
+   325.         a4 := SearchTotalMin(a, a4);
+   326.
+   327.         -- send a4 in T3
+   328.         accept SearchMin(a: out Integer) do
+   329.             a := a4;
+   330.         end SearchMin;
+   331.
+   332.         -- receive a from T3
+   333.         accept Data_a(min: in Integer) do
+   334.             a4:= min;
+   335.         end Data_a;
+   336.
+   337.         -- send a in T5
+   338.         T5.Data_a(a4);
+   339.
+   340. 		MC4calc(1..H) := MC4(H+1..2*H);
+   341.         -- main calculation
+   342.         AddMatrices(MA4(1..H), MultMatrices(MC4calc(1..H), MB4(1..N)), MultScalarMatrix(a4, MZ4(1..H)));
+   343.
+   344.         -- receive MA from T5
+   345.         T5.Res_MA(MA4(H+1..3*H));
+   346.
+   347.         -- send MA in T3
+   348.         accept Res_MA(MA: out Matrix3H) do
+   349.             MA(1..3*H) := MA4(1..3*H);
+   350.         end Res_MA;
+   351.
+   352.         Put_Line("Task 4 finished");
+   353.     end T4;
+   354.     -------------------------------------------------------
+   355.     task body T5 is
+   356.         MA5: Matrix2H;
+   357.         MB5, MC5: MatrixN;
+   358. 		MCintoT6 : Matrix3H;
+   359.         MZ5, MC5calc: MatrixH;
+   360.         E5: VectorH;
+   361.         a, a5: Integer;
+   362.
+   363.     begin
+   364.         Put_Line("Task 5 started");
+   365.
+   366.         -- input MC
+   367.         MatrixFillWithOnes(MC5);
+   368.
+   369. 		-- merge pieces of MC to send them in T6, T1 & T2
+   370.         MCintoT6(1..2*H) := MC5(1..2*H);
+   371.         MCintoT6(2*H+1..3*H) := MC5(5*H+1..6*H);
+   372. 	
+   373. 		-- receive MZ, E from T6
+   374.         accept DataMZ_E(MZ: in MatrixH; E: in VectorH) do
+   375.             MZ5(1..H) := MZ(1..H);
+   376.             E5(1..H) := E(1..H);
+   377.         end DataMZ_E;
+   378.
+   379. 		-- receive MB from T4
+   380.         accept DataMB(MB: in MatrixN) do
+   381.             MB5(1..N) := MB(1..N);
+   382.         end DataMB;
+   383.
+   384.         -- send MB in T6
+   385.         T6.DataMB(MB5(1..N));
+   386.
+   387.         -- send MC in T6 & T4
+   388.         T6.DataMC(MCintoT6(1..3*H));
+   389.         T4.DataMC(MC5(2*H+1..4*H));
+   390.     
+   391.         -- calculation of min
+   392.         a5 := SearchMinElemOFVector(E5(1..H));
+   393.
+   394.         -- receive a6 from T6 and search min(a6, a5)
+   395.         T6.SearchMin(a);
+   396.         a5 := SearchTotalMin(a, a5);
+   397.
+   398.         -- send a5 in T4
+   399.         accept SearchMin(a: out Integer) do 
+   400.             a := a5;
+   401.         end SearchMin;
+   402.
+   403.         -- receive a from T4
+   404.         accept Data_a(min: in Integer) do
+   405.             a5 := min;
+   406.         end Data_a;
+   407.         
+   408.         -- send a in T6
+   409.         T6.Data_a(a5);
+   410.
+   411. 		MC5calc(1..H) := MC5(4*H+1..5*H);
+   412.         -- main calculation
+   413.         AddMatrices(MA5(1..H), MultMatrices(MC5(1..H), MB5(1..N)), MultScalarMatrix(a5, MZ5(1..H)));
+   414.
+   415.         -- receive MA from T6
+   416.         T6.Res_MA(MA5(H+1..2*H));
+   417.
+   418.         -- send MA in T4
+   419.         accept Res_MA(MA: out Matrix2H) do
+   420.             MA(1..2*H) := MA5(1..2*H);
+   421.         end Res_MA;
+   422.
+   423.         Put_Line("Task 5 finished");
+   424.     end T5;
+   425.     -------------------------------------------------------
+   426.     task body T6 is
+   427.         MA6, MC6calc, MZ6calc: MatrixH;
+   428.         MC6: Matrix3H;
+   429.         MZ6: Matrix2H;
+   430.         MB6: MatrixN;
+   431.         E6: Vector2H;
+   432. 		E6calc: VectorH;
+   433.         a6: Integer;
+   434.
+   435. 	begin
+   436. 		Put_Line("Task 6 started");
+   437.
+   438. 		-- recieve MZ, E from T1
+   439.         accept DataMZ_E(MZ: in Matrix2H; E: in Vector2H) do
+   440.             MZ6(1..2*H) := MZ(1..2*H);
+   441.             E6(1..2*H) := E(1..2*H);
+   442.         end DataMZ_E;
+   443.
+   444.         -- send MZ, E in T5
+   445.         T5.DataMZ_E(MZ6(1..H), E6(1..H));
+   446.
+   447. 		-- receive MB from T5
+   448.         accept DataMB(MB: in MatrixN) do
+   449.             MB6(1..N) := MB(1..N);
+   450.         end DataMB;
+   451.
+   452. 		-- recieve MC from T5
+   453.         accept DataMC(MC: in Matrix3H) do
+   454.             MC6(1..3*H) := MC(1..3*H);
+   455.         end DataMC;
+   456.
+   457.         -- send MC in T1
+   458.         T1.DataMC(MC6(1..2*H));
+   459.
+   460.         -- calculation of min
+   461. 		E6calc(1..H) := E6(H+1..2*H);
+   462.         a6 := SearchMinElemOfVector(E6calc(1..H));
+   463.
+   464.         -- send a6 in T5
+   465.         accept SearchMin(a: out Integer) do
+   466.             a := a6;
+   467.         end SearchMin;
+   468.
+   469.         -- receive a from T5
+   470.         accept Data_a(min: in Integer) do
+   471.             a6:= min;
+   472.         end Data_a;
+   473.
+   474. 		MC6calc(1..H) := MC6(2*H+1..3*H);
+   475. 		MZ6calc(1..H) := MZ6(H+1..2*H);
+   476.         -- main calculation
+   477.         AddMatrices(MA6(1..H), MultMatrices(MC6calc(1..H), MB6(1..N)), MultScalarMatrix(a6, MZ6calc(1..H)));
+   478.
+   479.         -- send MA in T5
+   480.         accept Res_MA(MA: out MatrixH) do
+   481.             MA(1..H) := MA6(1..H);
+   482.         end Res_MA;
+   483.
+   484.         Put_Line("Task 6 finished");
+   485.     end T6;
+   486.     -------------------------------------------------------
+   487. 	begin	
+   488. 		null;
+   489. 	end Task_Launch;
+   490.
+   491. -- Body of main programme
+   492. begin
+   493.    Put_Line("Lab07 started");
+   494.    Task_Launch;
+   495.    Put_Line("Lab07 finished");
+   496. end Lab07;
+
+ 496 lines: No errors

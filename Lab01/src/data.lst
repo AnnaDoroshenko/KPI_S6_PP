@@ -1,0 +1,182 @@
+GNAT GPL 2017 (20170515-63)
+Copyright 1992-2017, Free Software Foundation, Inc.
+
+Compiling: data.adb
+Source file time stamp: 2018-02-20 23:24:12
+Compiled at: 2018-02-21 03:46:41
+
+     1. with Text_IO, Ada.Integer_Text_IO;
+     2. use Text_IO, Ada.Integer_Text_IO;
+     3.
+     4. -- Package Data, body --
+     5. package body Data is
+     6.
+     7.    procedure FillVectorWithOnes (A : out Vector) is
+     8.    begin
+     9.       for i in 1..N loop
+    10.          A(i) := 1;
+    11.       end loop;      
+    12.    end FillVectorWithOnes;
+    13.    
+    14.    procedure FillMatrixWithOnes (MA : out Matrix) is
+    15.    begin
+    16.       for i in 1..N loop
+    17.          for j in 1..N loop
+    18.             MA(i,j) := 1;
+    19.          end loop;
+    20.       end loop;
+    21.    end FillMatrixWithOnes;
+    22.    
+    23.    -- Functions for the calculation --
+    24.    
+    25.    function SearchMinElemOfVectH (A : in Vector; st, fin: in Integer) return Integer is
+    26.       minElem : Integer := A(st);
+    27.    begin
+    28.       for i in st+1..fin loop
+    29.          if A(i) < minElem then
+    30.             minElem := A(i);
+    31.          end if;
+    32.       end loop;
+    33.       return minElem;  
+    34.    end SearchMinElemOfVectH;
+    35.    
+    36.    function SearchMin (a, b : in Integer) return Integer is
+    37.       min : Integer := a;
+    38.    begin
+    39.       if b < a then
+    40.          min := b;
+    41.       end if;
+    42.       return min;
+    43.    end SearchMin;
+    44.    
+    45.    function MultMatricesH (MA, MB : in Matrix; st, fin: in Integer) return Matrix is
+    46.       mRes : Matrix;
+    47.    begin
+    48.       for i in 1..N loop
+    49.          for j in st..fin loop
+    50.             mRes(i, j) := 0;
+    51.             for k in 1..N loop
+    52.                mRes(i, j) := mRes(i, j) + MA (i, k) * MB (k, j);
+    53.             end loop;
+    54.          end loop;
+    55.       end loop;
+    56.       return mRes;
+    57.    end MultMatricesH;
+    58.    
+    59.    function MultScalarMatrixH (scalar : in Integer; MA : Matrix; st, fin: in Integer) return Matrix is
+    60.       resMatrix : Matrix;
+    61.    begin 
+    62.       for i in 1..N loop
+    63.          for j in st..fin loop
+    64.             resMatrix(i, j) := scalar * MA(i,j);
+    65.          end loop;
+    66.       end loop;
+    67.       return resMatrix;
+    68.    end MultScalarMatrixH;
+    69.    
+    70.    procedure AddMatricesH (MR : out Matrix; MA, MB : in Matrix; st, fin: in Integer) is
+    71.    begin
+    72.       for i in 1..N loop
+    73.          for j in st..fin loop
+    74.             MR(i, j) := MA(i, j) + MB(i, j);
+    75.          end loop;
+    76.       end loop;
+    77.    end AddMatricesH;
+    78.    
+    79.    function CopyMatrix (MA : in Matrix) return Matrix is
+    80.       resMatrix : Matrix;
+    81.    begin
+    82.       for i in 1..N loop
+    83.          for j in 1..N loop
+    84.             resMatrix(i, j) := MA(i, j);
+    85.          end loop;
+    86.       end loop;
+    87.       return resMatrix;
+    88.    end CopyMatrix;
+    89.    
+    90.    -- Procedures for input/output of scalar, vector and matrix --
+    91.    
+    92.    procedure InputScalar (a : out Integer) is
+    93.    begin
+    94.       Get(a);
+    95.    end InputScalar;
+    96.    
+    97.    procedure InputVector (A : out Vector) is
+    98.    begin
+    99.       for i in 1..N loop
+   100.           Get(A(i));     
+   101.       end loop;
+   102.    end InputVector;
+   103.    
+   104.    procedure InputMatrix (MA : out Matrix) is
+   105.    begin
+   106.       for i in 1..N loop
+   107.           New_Line;
+   108.           for j in 1..N loop
+   109.               Get(MA(i, j));
+   110.           end loop;
+   111.       end loop;
+   112.    end InputMatrix; 
+   113.    
+   114.    procedure OutputScalar (a : in Integer) is
+   115.    begin
+   116.       Put(a);
+   117.    end OutputScalar;
+   118.    
+   119.    procedure OutputVector (A : in Vector) is
+   120.    begin
+   121.       for i in 1..N loop
+   122.           Put(A(i));
+   123.       end loop;
+   124.    end OutputVector;
+   125.                                                
+   126.    procedure OutputMatrix (MA : in Matrix) is
+   127.    begin
+   128.       for i in 1..N loop
+   129.          for j in 1..N loop
+   130.               Put(MA(i, j));
+   131.          end loop;
+   132.          New_Line;
+   133.       end loop;
+   134.    end OutputMatrix;
+   135.    
+   136. end Data;
+
+Compiling: data.ads
+Source file time stamp: 2018-02-20 23:26:30
+Compiled at: 2018-02-21 03:46:41
+
+     1. generic
+     2.    N : Integer;
+     3.    
+     4. package Data is
+     5.
+     6.    -- Declaration of private types --
+     7.    type Vector is private;
+     8.    type Matrix is private;
+     9.    
+    10.    procedure InputScalar (a : out Integer);  
+    11.    procedure InputVector (A : out Vector);                 
+    12.    procedure InputMatrix (MA : out Matrix);
+    13.    procedure OutputScalar (a : in Integer);
+    14.    procedure OutputVector (A : in Vector);             
+    15.    procedure OutputMatrix (MA : in Matrix);
+    16.    
+    17.    procedure FillVectorWithOnes (A : out Vector);
+    18.    procedure FillMatrixWithOnes (MA : out Matrix);
+    19.    
+    20.    function SearchMinElemOfVectH (A : Vector; st, fin: in Integer) return Integer;
+    21.    function SearchMin (a, b : Integer) return Integer;
+    22.    function MultMatricesH (MA, MB : Matrix; st, fin: in Integer) return Matrix;
+    23.    function MultScalarMatrixH (scalar : Integer; MA : Matrix; st, fin: in Integer) return Matrix;
+    24.    procedure AddMatricesH (MR : out Matrix; MA, MB : Matrix; st, fin: in Integer);                      
+    25.    function CopyMatrix (MA : in Matrix) return Matrix;
+    26.    
+    27.    -- Definition of private types --
+    28. private
+    29.    type Vector is array(1..N) of Integer;
+    30.    type Matrix is array(1..N, 1..N) of Integer;
+    31.    
+    32. end Data;
+
+ 136 lines: No errors
